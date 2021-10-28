@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class UserInteraction extends JFrame{
     private JPanel mainPanel;
@@ -72,6 +74,7 @@ public class UserInteraction extends JFrame{
 
         new SetLabelButtons();
 
+        this.addWindowListener(new WindowEventHandler());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
 
@@ -83,7 +86,7 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                dataTransmissionObject.sendToPeer(userMessageEditorPane.getText());
+                dataTransmissionObject.sendToPeer(userMessageEditorPane.getText()+"\n");
 
                 chatEditorPane.setText(chatEditorPane.getText()+ "Me: "+userMessageEditorPane.getText()+"\n" ); // send to controller
                 //receiver.sendMessageFromUser( textArea1.getText() ); // string
@@ -357,6 +360,12 @@ public class UserInteraction extends JFrame{
     public void addMessageReceivedFromPeer(String message) {
 
         chatEditorPane.setText(chatEditorPane.getText() + "Opponent: " + message+"\n" );
+    }
+
+    class WindowEventHandler extends WindowAdapter {
+        public void windowClosing(WindowEvent evt) {
+            dataTransmissionObject.windowClosed();
+        }
     }
 
 }
