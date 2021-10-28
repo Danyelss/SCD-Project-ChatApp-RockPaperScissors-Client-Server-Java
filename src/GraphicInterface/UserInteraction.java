@@ -1,5 +1,7 @@
 package GraphicInterface;
 
+import ControllerInterface.Controller;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,18 +31,44 @@ public class UserInteraction extends JFrame{
     private JButton paperButton;
     private JButton scissorsButton;
 
-    public UserInteraction() {
+    public ImageSetterForUser getImageSetterForUser() {
+        return imageSetterForUser;
+    }
+
+    private ImageSetterForUser imageSetterForUser;
+
+    public SetInstructionalLabel getSetInstructionalLabel() {
+        return setInstructionalLabel;
+    }
+
+    public ImageSetterForOpponent getImageSetterForOpponent() {
+        return imageSetterForOpponent;
+    }
+
+    private ImageSetterForOpponent imageSetterForOpponent;
+
+    private SetInstructionalLabel setInstructionalLabel;
+
+    public void setDataTransmissionObject(Controller.DataTransmissionObject dataTransmissionObject) {
+        this.dataTransmissionObject = dataTransmissionObject;
+    }
+
+    private Controller.DataTransmissionObject dataTransmissionObject;
+
+    public UserInteraction(Controller.DataTransmissionObject dataTransmissionObject) {
         setContentPane(mainPanel);
         this.setTitle("Rock Paper Scissors");
         setSize(1055, 745);
 
         sendButton.setBorderPainted(false);
 
-        new ImageSetterForUser();
+        setDataTransmissionObject(dataTransmissionObject);
 
-        new ImageSetterForOpponent("scissors");
+        this.imageSetterForUser = new ImageSetterForUser();
 
-        new SetInstructionalLabel("choose");
+        this.imageSetterForOpponent =  new ImageSetterForOpponent();
+
+        this.setInstructionalLabel = new SetInstructionalLabel();
 
         new SetLabelButtons();
 
@@ -55,7 +83,9 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                chatEditorPane.setText(chatEditorPane.getText()+"\n" + userMessageEditorPane.getText()); // send to controller
+                dataTransmissionObject.sendToPeer(userMessageEditorPane.getText());
+
+                chatEditorPane.setText(chatEditorPane.getText()+ "Me: "+userMessageEditorPane.getText()+"\n" ); // send to controller
                 //receiver.sendMessageFromUser( textArea1.getText() ); // string
                 userMessageEditorPane.setText("");
             }
@@ -68,9 +98,12 @@ public class UserInteraction extends JFrame{
                 // only if action is possible
 
                 // call function to controller
-                new SetInstructionalLabel("wait");
-                new ImageSetterForUser("blank");
-                new SetLabelButtons().removeButtons();
+
+                //if(Controller.optionAccepted("rock")) {
+                    setInstructionalLabel.messageSetInstructionalLabel("wait");
+                    imageSetterForUser.blankImageSetterForUser();
+                    new SetLabelButtons().removeButtons();
+                //}
             }
         });
 
@@ -79,9 +112,11 @@ public class UserInteraction extends JFrame{
             public void actionPerformed(ActionEvent e) {
 
                 // call function to controller
-                new SetInstructionalLabel("wait");
-                new ImageSetterForUser("blank");
-                new SetLabelButtons().removeButtons();
+               // if(Controller.optionAccepted("paper")) {
+                    setInstructionalLabel.messageSetInstructionalLabel("wait");
+                    imageSetterForUser.blankImageSetterForUser();
+                    new SetLabelButtons().removeButtons();
+               // }
             }
         });
 
@@ -90,9 +125,11 @@ public class UserInteraction extends JFrame{
             public void actionPerformed(ActionEvent e) {
 
                 // call function to controller
-                new SetInstructionalLabel("wait");
-                new ImageSetterForUser("blank");
-                new SetLabelButtons().removeButtons();
+              // if(Controller.optionAccepted("scissors")) {
+                    setInstructionalLabel.messageSetInstructionalLabel("wait");
+                    imageSetterForUser.blankImageSetterForUser();
+                    new SetLabelButtons().removeButtons();
+               // }
             }
         });
     }
@@ -119,7 +156,7 @@ public class UserInteraction extends JFrame{
             scissorsImageLabel.setIcon(imgThisImg);
         }
 
-        private ImageSetterForUser() {
+        public void optionImageSetterForUser() {
             setRockImageForUser();
             setPaperImageForUser();
             setScissorsImageForUser();
@@ -146,12 +183,14 @@ public class UserInteraction extends JFrame{
             scissorsImageLabel.setIcon(imgThisImg);
         }
 
-        private ImageSetterForUser(String blank) {
+        public void blankImageSetterForUser() {
             setBlankRockImageForUser();
             setBlankPaperImageForUser();
             setBlankScissorsImageForUser();
         }
 
+        public ImageSetterForUser() {
+        }
     }
 
     public class SetLabelButtons {
@@ -253,36 +292,40 @@ public class UserInteraction extends JFrame{
             opponentOptionLabel.setIcon(imgThisImg);
         }
 
-        public ImageSetterForOpponent(String option) {
+        public void stringImageSetterForOpponent(String option) {
             setOptionImageForOpponent(option);
         }
 
-
+        public ImageSetterForOpponent() {}
     }
 
     public class SetInstructionalLabel {
 
         private void setWait(){
-            instructionalLabel.setText("Wait for opponent.");
+            instructionalLabel.setText("Wait for opponent!");
         }
 
         private void setChoose() {
-            instructionalLabel.setText("Choose your move.");
+            instructionalLabel.setText("Choose your move!");
         }
 
         private void setWin() {
-            instructionalLabel.setText("You win.");
+            instructionalLabel.setText("You win!");
         }
 
         private void setLose() {
-            instructionalLabel.setText("You lose.");
+            instructionalLabel.setText("You lose!");
         }
 
         private void setDraw() {
-            instructionalLabel.setText("Draw");
+            instructionalLabel.setText("Draw.");
         }
 
-        public SetInstructionalLabel(String message) {
+        private void setWelcome() { instructionalLabel.setText("Welcome! The Game will begin shortly."); }
+
+        private void setWrong() { instructionalLabel.setText("Wrong message."); }
+
+        public void messageSetInstructionalLabel(String message) {
             switch (message){
                 case "wait":
                     setWait();
@@ -299,13 +342,22 @@ public class UserInteraction extends JFrame{
                 case "draw":
                     setDraw();
                     break;
+                case "welcome":
+                    setWelcome();
+                    break;
+                default:
+                    setWrong();
             }
 
         }
+
+        public SetInstructionalLabel(){}
     }
 
-    public static void main(String[] args) {
-        UserInteraction userInteraction = new UserInteraction();
+    public void addMessageReceivedFromPeer(String message) {
+
+        chatEditorPane.setText(chatEditorPane.getText() + "Opponent: " + message+"\n" );
     }
+
 }
 
