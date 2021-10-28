@@ -51,20 +51,12 @@ public class UserInteraction extends JFrame{
 
     private SetInstructionalLabel setInstructionalLabel;
 
-    public void setDataTransmissionObject(Controller.DataTransmissionObject dataTransmissionObject) {
-        this.dataTransmissionObject = dataTransmissionObject;
-    }
-
-    private Controller.DataTransmissionObject dataTransmissionObject;
-
-    public UserInteraction(Controller.DataTransmissionObject dataTransmissionObject) {
+    public UserInteraction() {
         setContentPane(mainPanel);
         this.setTitle("Rock Paper Scissors");
         setSize(1055, 745);
 
         sendButton.setBorderPainted(false);
-
-        setDataTransmissionObject(dataTransmissionObject);
 
         this.imageSetterForUser = new ImageSetterForUser();
 

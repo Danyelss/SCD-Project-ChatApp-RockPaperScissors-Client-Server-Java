@@ -1,29 +1,14 @@
 package ControllerInterface;
 
-import Client.Client;
-import Data.DataExchange;
 import GraphicInterface.UserInteraction;
 
 public class Controller {
 
     private UserInteraction privateInterface;
 
-    public DataTransmissionObject getDataTransmissionObject() {
-        return dataTransmissionObject;
-    }
+    public Controller() {
 
-    private DataTransmissionObject dataTransmissionObject;
-
-    private DataExchange dataExchange;
-
-
-    public Controller(DataExchange dataExchange) {
-
-        this.dataTransmissionObject = new DataTransmissionObject();
-
-        this.dataExchange = dataExchange;
-
-        this.privateInterface =  new UserInteraction(this.dataTransmissionObject);
+        this.privateInterface =  new UserInteraction();
 
         this.privateInterface.getImageSetterForUser().blankImageSetterForUser();
         this.privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("welcome");
@@ -38,23 +23,13 @@ public class Controller {
 
     }
 
-    public class DataTransmissionObject {
-        public boolean optionAccepted(String option) {
-            dataExchange.receiveMessageThroughExchange(option);
 
-            return true;
-        }
+    // controller for messages
 
-        public void sendToPeer(String message) {
-            dataExchange.receiveMessageThroughExchange(message);
-        }
-
-        public void receiveFromPeer(String message) {
-            System.out.println(message);
-        }
-
-        public void windowClosed(){
-            dataExchange.closeClient();
-        }
+    public void messageToInterfaceChat(String message) {
+        privateInterface.addMessageReceivedFromPeer(message);
     }
+
+
+
 }
