@@ -1,6 +1,7 @@
 package Client;
 
 import ControllerInterface.Controller;
+import Data.DataExchange;
 
 import java.nio.channels.SocketChannel;
 import java.io.BufferedReader;
@@ -51,9 +52,9 @@ public class Client {
 
     public Client() {
 
-        setDataExchange(new DataExchange());
+        setDataExchange(new DataExchange(sender, receiver, this)); // how tf
 
-        Controller controller = new Controller(getDataExchange());
+        Controller controller = new Controller(dataExchange);
 
         try {
             this.clientSocket = new Socket("127.0.0.1", 8089);
@@ -70,26 +71,6 @@ public class Client {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    public class DataExchange {
-
-        public void receiveMessageThroughExchange(String message) {
-            sender.sendMessage(message);
-        }
-
-        public void sendMessageThroughExchange(String message) {
-            controller.getDataTransmissionObject().receiveFromPeer(message);
-        }
-
-
-        public void closeClient() {
-            clientClose();
-        }
-
-        public DataExchange() {
         }
     }
 

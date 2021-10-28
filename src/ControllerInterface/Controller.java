@@ -1,6 +1,7 @@
 package ControllerInterface;
 
 import Client.Client;
+import Data.DataExchange;
 import GraphicInterface.UserInteraction;
 
 public class Controller {
@@ -13,10 +14,10 @@ public class Controller {
 
     private DataTransmissionObject dataTransmissionObject;
 
-    private Client.DataExchange dataExchange;
+    private DataExchange dataExchange;
 
 
-    public Controller(Client.DataExchange dataExchange) {
+    public Controller(DataExchange dataExchange) {
 
         this.dataTransmissionObject = new DataTransmissionObject();
 

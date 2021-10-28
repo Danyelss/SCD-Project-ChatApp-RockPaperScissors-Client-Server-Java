@@ -1,75 +1,157 @@
 package Server;
 
+import ControllerInterface.Controller;
+import Data.DataExchange;
+
+import java.nio.channels.SocketChannel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
-import java.util.Iterator;
 import java.util.Scanner;
-import java.util.Set;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 
 public class Server {
-    public static void main(String[] args){
-        final ServerSocket serverSocket ;
-        final Socket clientSocket ;
-        final BufferedReader in;
-        final PrintWriter out;
-        final Scanner sc=new Scanner(System.in);
+
+    private Socket clientSocket; // socket used by client to send and recieve data from server
+    private BufferedReader in;   // object to read data from socket
+    private PrintWriter out;     // object to write data into socket
+    private Scanner sc = new Scanner(System.in); // object to read data from user's keybord
+
+    private SocketChannel client;
+    private Controller controller;
+
+    public DataExchange getDataExchange() {
+        return dataExchange;
+    }
+
+    public void setDataExchange(DataExchange dataExchange) {
+        this.dataExchange = dataExchange;
+    }
+
+    private DataExchange dataExchange;
+
+    private Sender sender;
+
+    private Receiver receiver;
+
+    public void clientClose() {
+        try {
+            System.out.println("Server out of service");
+
+            this.out.close();
+
+            this.clientSocket.close();
+
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Server() {
+
+        setDataExchange(new DataExchange());  // how tf
+
+        Controller controller = new Controller(dataExchange);
 
         try {
-            serverSocket = new ServerSocket(8089);
-            clientSocket = serverSocket.accept();
-            out = new PrintWriter(clientSocket.getOutputStream());
-            in = new BufferedReader (new InputStreamReader(clientSocket.getInputStream()));
+            this.clientSocket = new Socket("127.0.0.1", 8089);
+            this.out = new PrintWriter(clientSocket.getOutputStream());
+            this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            Thread sender= new Thread(new Runnable() {
-                String msg; //variable that will contains the data writter by the user
-                @Override   // annotation to override the run method
-                public void run() {
-                    while(true){
-                        msg = sc.nextLine(); //reads data from user's keybord
-                        out.println(msg);    // write data stored in msg in the clientSocket
-                        out.flush();   // forces the sending of the data
-                    }
-                }
-            });
+            this.sender = new Sender();
+
             sender.start();
 
-            Thread receive= new Thread(new Runnable() {
-                String msg ;
-                @Override
-                public void run() {
-                    try {
-                        msg = in.readLine();
-                        //tant que le client est connecté
-                        while(msg!=null){
-                            System.out.println("Client : "+msg);
-                            msg = in.readLine();
-                        }
+            this.receiver = new Receiver();
 
-                        System.out.println("Client déconecté");
+            receiver.start();
 
-                        out.close();
-                        clientSocket.close();
-                        serverSocket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            receive.start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
     }
-}
+
+    public static void main(String[] args) {
+        Server server = new Server();
+    }
+
+    public class Sender extends Thread {
+        private CyclicBarrier cyclicBarrier;
+        private String message;
+
+        public void sendMessage(String message) {
+            this.message = message;
+
+            System.out.println(message);
+
+            try {
+                this.cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("o trecut de send messaage cb");
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+
+                System.out.println("inainte de run cb");
+
+                try {
+                    this.cyclicBarrier.await();
+                } catch (InterruptedException | BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("dupa run cb");
+
+                out.print(message);
+                out.flush();
+
+                System.out.println("dupa out print");
+            }
+        }
+
+        public Sender() {
+            this.cyclicBarrier = new CyclicBarrier(2);
+        }
+    }
+
+    public class Receiver extends Thread {
+        private String message;
+
+        public void receiveMessage(String message) {
+            dataExchange.receiveMessageThroughExchange(message);
+        }
+
+        @Override
+        public void run() {
+            try {
+
+                message = in.readLine();
+
+                while (message != null) {
+                    System.out.println("Server : " + message + "mue");
+
+                    receiveMessage(message);
+
+                    message = in.readLine();
+                }
+
+                clientClose();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public Receiver() {
+        }
+    }
+
