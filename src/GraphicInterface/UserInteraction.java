@@ -96,7 +96,9 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("rock");
 
-                imageSetterForUser.blankImageSetterForUser();
+                imageSetterForUser.blank1ImageSetterForUser();
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
+
                 //new SetLabelButtons().removeButtons();
             }
         });
@@ -107,7 +109,8 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("paper");
 
-                imageSetterForUser.blankImageSetterForUser();
+                imageSetterForUser.blank2ImageSetterForUser();
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
                 //new SetLabelButtons().removeButtons();
             }
         });
@@ -118,7 +121,9 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("scissors");
 
-                imageSetterForUser.blankImageSetterForUser();
+                imageSetterForUser.blank3ImageSetterForUser();
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
+
                 //new SetLabelButtons().removeButtons();
             }
         });
@@ -156,21 +161,39 @@ public class UserInteraction extends JFrame {
         private void setBlankRockImageForUser() {
             ImageIcon imgThisImg = new ImageIcon("src/images/blank.png");
             imgThisImg.getImage().flush();
-            rockImageLabel.setIcon(imgThisImg);
+            //rockImageLabel.setIcon(imgThisImg);
+            paperImageLabel.setIcon(imgThisImg);
+            scissorsImageLabel.setIcon(imgThisImg);
         }
 
         // set blank image for user
         private void setBlankPaperImageForUser() {
             ImageIcon imgThisImg = new ImageIcon("src/images/blank.png");
             imgThisImg.getImage().flush();
-            paperImageLabel.setIcon(imgThisImg);
+           //paperImageLabel.setIcon(imgThisImg);
+            rockImageLabel.setIcon(imgThisImg);
+            scissorsImageLabel.setIcon(imgThisImg);
         }
 
         // set blank image for user
         private void setBlankScissorsImageForUser() {
             ImageIcon imgThisImg = new ImageIcon("src/images/blank.png");
             imgThisImg.getImage().flush();
-            scissorsImageLabel.setIcon(imgThisImg);
+            //scissorsImageLabel.setIcon(imgThisImg);
+            paperImageLabel.setIcon(imgThisImg);
+            rockImageLabel.setIcon(imgThisImg);
+        }
+
+        public void blank1ImageSetterForUser() {
+            setBlankRockImageForUser();
+        }
+
+        public void blank2ImageSetterForUser() {
+            setBlankPaperImageForUser();
+        }
+
+        public void blank3ImageSetterForUser() {
+            setBlankScissorsImageForUser();
         }
 
         public void blankImageSetterForUser() {

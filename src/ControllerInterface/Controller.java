@@ -24,7 +24,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-        newGame();
+        new checkThread().start();
     }
 
     private void newGame() {
@@ -54,22 +54,13 @@ public class Controller {
         buttonsActive = true;
     }
 
-    private boolean buttonsActive = false;
+    private boolean buttonsActive = true;
 
 
     private void gameMessageForTransmission(String message) {
         dataBackFromController.dataBackFromControllerFunction("##" + message);
     }
 
-
-    private void waitOrResult() {
-        if (opponentChoice.equalsIgnoreCase("")) {
-            privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("wait");
-        } else {
-            privateInterface.getImageSetterForUser().blankImageSetterForUser();
-            decideWinner();
-        }
-    }
 
     public void gameMessageController(String message) {
         if (isButtonsActive()) {
@@ -90,10 +81,6 @@ public class Controller {
             }
 
             setButtonsInactive();
-
-            System.out.println(message + " - buttons inactive");
-
-            waitOrResult();
         }
     }
 
@@ -103,13 +90,13 @@ public class Controller {
     private void decideWinner() {
         if (opponentChoice.equalsIgnoreCase(userChoice)) {
             if (userChoice.equalsIgnoreCase("paper")) {
-                showResults("draw", "P");
+                showResults("draw");
             }
             if (userChoice.equalsIgnoreCase("scissors")) {
-                showResults("draw", "S");
+                showResults("draw");
             }
             if (userChoice.equalsIgnoreCase("rock")) {
-                showResults("draw", "R");
+                showResults("draw");
             }
 
             return;
@@ -118,70 +105,46 @@ public class Controller {
         switch (opponentChoice) {
             case "rock":
                 if (userChoice.equalsIgnoreCase("paper")) {
-                    showResults("win", "P");
+                    showResults("win");
                 } else if (userChoice.equalsIgnoreCase("scissors")) {
-                    showResults("lose", "S");
+                    showResults("lose");
                 }
                 break;
 
             case "paper":
                 if (userChoice.equalsIgnoreCase("rock")) {
-                    showResults("win", "R");
+                    showResults("lose");
                 } else if (userChoice.equalsIgnoreCase("scissors")) {
-                    showResults("lose", "S");
+                    showResults("win");
                 }
                 break;
 
             case "scissors":
                 if (userChoice.equalsIgnoreCase("rock")) {
-                    showResults("win", "R");
+                    showResults("win");
                 } else if (userChoice.equalsIgnoreCase("paper")) {
-                    showResults("lose", "P");
+                    showResults("lose");
                 }
                 break;
         }
     }
 
-    private void showResults(String result, String user) {
+    private void showResults(String result) {
         switch (result) {
             case "draw":
                 privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("draw");
-                dataBackFromController.dataBackFromControllerFunction("&&" + "D" + user);
                 break;
             case "win":
                 privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("win");
-                dataBackFromController.dataBackFromControllerFunction("&&" + "L" + user);
                 break;
             case "lose":
                 privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("lose");
-                dataBackFromController.dataBackFromControllerFunction("&&" + "W" + user);
                 break;
         }
-
-        privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent(opponentChoice);
-
-        System.out.println("Dc pl nu imi afiseaza imaginea " + opponentChoice);
-
-        afterResult();
     }
-
-    private void afterResult() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("cand morti mei ajunge aici");
-
-        newGame();
-    }
-
 
 
     public void messageToController(String message) {
-        System.out.println(" Decode:   " + message);
-
         if (message.charAt(0) == '%' && message.charAt(1) == '%') {
             message = message.substring(2); // cuts first ##
 
@@ -202,36 +165,6 @@ public class Controller {
             if (message.charAt(2) == 'S') {
                 this.opponentChoice = "scissors";
             }
-
-            return;
-        }
-
-        if (message.charAt(0) == '&' && message.charAt(1) == '&') {
-            if (message.charAt(2) == 'D') {
-                privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("draw");
-            }
-
-            if (message.charAt(2) == 'W') {
-                privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("win");
-            }
-
-            if (message.charAt(2) == 'L') {
-                privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("win");
-            }
-
-            switch (message.charAt(3)) {
-                case 'R':
-                    privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent("rock");
-                    break;
-                case 'P':
-                    privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent("paper");
-                    break;
-                case 'S':
-                    privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent("scissors");
-                    break;
-            }
-
-            afterResult();
         }
     }
 
@@ -244,5 +177,39 @@ public class Controller {
 
     public void messageToUser(String message) {
         privateInterface.addMessageReceivedFromPeer(message + "\n");
+    }
+
+
+    private class checkThread extends Thread {
+        @Override
+        public void run() {
+
+            newGame();
+            while (true) {
+
+                System.out.println("opponent: " + opponentChoice);
+                System.out.println("user: " + userChoice);
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (!opponentChoice.isEmpty() && !userChoice.isEmpty()) {
+                    privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent(opponentChoice);
+
+                    decideWinner();
+
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    newGame();
+                }
+            }
+        }
     }
 }
