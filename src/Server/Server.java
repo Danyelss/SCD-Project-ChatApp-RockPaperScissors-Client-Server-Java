@@ -1,6 +1,7 @@
 package Server;
 
 import ControllerInterface.Controller;
+import Data.DataBackFromController;
 
 import java.nio.channels.SocketChannel;
 import java.io.BufferedReader;
@@ -22,19 +23,29 @@ public class Server {
     private SocketChannel client;
     private Controller controller;
 
-    public void setDataTransmissionObject(DataTransmissionObject dataTransmissionObject) {
-        this.dataTransmissionObject = dataTransmissionObject;
+    public Sender getSender() {
+        return sender;
     }
 
-    public DataTransmissionObject getDataTransmissionObject() {
-        return dataTransmissionObject;
+    public Receiver getReceiver() {
+        return receiver;
     }
-
-    private DataTransmissionObject dataTransmissionObject;
 
     private Sender sender;
 
     private Receiver receiver;
+
+
+    private void setDataBackFromController(DataBackFromController dataBackFromController) {
+        this.dataBackFromController = dataBackFromController;
+    }
+
+    public DataBackFromController getDataBackFromController() {
+        return dataBackFromController;
+    }
+
+    private DataBackFromController dataBackFromController;
+
 
     public void clientClose() {
         try {
@@ -44,16 +55,17 @@ public class Server {
 
             this.clientSocket.close();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     public Server() {
 
-        setDataTransmissionObject(new DataTransmissionObject());
+        setDataBackFromController(new DataBackFromController(this));
 
-        Controller controller = new Controller(getDataTransmissionObject());
+        Controller controller = new Controller(getDataBackFromController());
 
         try {
             this.clientSocket = new Socket("127.0.0.1", 8089);
@@ -126,7 +138,7 @@ public class Server {
         private String message;
 
         public void receiveMessage(String message) {
-            dataExchange.receiveMessageThroughExchange(message);
+            controller.messageToUser(message);
         }
 
         @Override
@@ -153,4 +165,6 @@ public class Server {
         public Receiver() {
         }
     }
+
+}
 

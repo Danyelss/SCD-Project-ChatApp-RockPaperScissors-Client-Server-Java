@@ -1,14 +1,19 @@
 package ControllerInterface;
 
+import Data.DataBackFromController;
 import GraphicInterface.UserInteraction;
 
 public class Controller {
 
     private UserInteraction privateInterface;
 
-    public Controller() {
+    private DataBackFromController dataBackFromController;
 
-        this.privateInterface =  new UserInteraction();
+    public Controller(DataBackFromController dataBackFromController) {
+
+        this.dataBackFromController = dataBackFromController;
+
+        this.privateInterface =  new UserInteraction(this);
 
         this.privateInterface.getImageSetterForUser().blankImageSetterForUser();
         this.privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("welcome");
@@ -23,6 +28,17 @@ public class Controller {
 
     }
 
+    public void messageFromUser(String message) {
+        dataBackFromController.dataBackFromControllerFunction(message);
+    }
+
+    public void windowClosed(){
+
+    }
+
+    public void messageToUser(String message){
+        privateInterface.addMessageReceivedFromPeer(message);
+    }
 
     // controller for messages
 

@@ -33,6 +33,8 @@ public class UserInteraction extends JFrame{
     private JButton paperButton;
     private JButton scissorsButton;
 
+    private Controller controller;
+
     public ImageSetterForUser getImageSetterForUser() {
         return imageSetterForUser;
     }
@@ -51,7 +53,8 @@ public class UserInteraction extends JFrame{
 
     private SetInstructionalLabel setInstructionalLabel;
 
-    public UserInteraction() {
+    public UserInteraction(Controller controller) {
+        this.controller = controller;
         setContentPane(mainPanel);
         this.setTitle("Rock Paper Scissors");
         setSize(1055, 745);
@@ -78,7 +81,7 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                dataTransmissionObject.sendToPeer(userMessageEditorPane.getText()+"\n");
+                controller.messageFromUser(userMessageEditorPane.getText());
 
                 chatEditorPane.setText(chatEditorPane.getText()+ "Me: "+userMessageEditorPane.getText()+"\n" ); // send to controller
                 //receiver.sendMessageFromUser( textArea1.getText() ); // string
@@ -356,7 +359,7 @@ public class UserInteraction extends JFrame{
 
     class WindowEventHandler extends WindowAdapter {
         public void windowClosing(WindowEvent evt) {
-            dataTransmissionObject.windowClosed();
+            controller.windowClosed();
         }
     }
 

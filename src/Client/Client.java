@@ -1,6 +1,7 @@
 package Client;
 
 import ControllerInterface.Controller;
+import Data.DataBackFromController;
 
 import java.nio.channels.SocketChannel;
 import java.io.BufferedReader;
@@ -34,6 +35,18 @@ public class Client {
 
     private Receiver receiver;
 
+
+    private void setDataBackFromController(DataBackFromController dataBackFromController) {
+        this.dataBackFromController = dataBackFromController;
+    }
+
+    public DataBackFromController getDataBackFromController() {
+        return dataBackFromController;
+    }
+
+    private DataBackFromController dataBackFromController;
+
+
     public void clientClose() {
         try {
             System.out.println("Server out of service");
@@ -42,14 +55,14 @@ public class Client {
 
             this.clientSocket.close();
 
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public Client() {
 
-        Controller controller = new Controller();
+        Controller controller = new Controller(getDataBackFromController());
 
         try {
             this.clientSocket = new Socket("127.0.0.1", 8089);
@@ -121,7 +134,7 @@ public class Client {
         private String message;
 
         public void receiveMessage(String message) {
-            dataExchange.receiveMessageThroughExchange(message);
+            controller.messageToUser(message);
         }
 
         @Override
