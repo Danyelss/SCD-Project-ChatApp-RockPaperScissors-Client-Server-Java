@@ -49,6 +49,11 @@ public class Controller {
             if(message.equalsIgnoreCase("rock")){
                 gameMessageForTransmission("R");
                 setButtonsInactive();
+
+                // function to find the winner
+
+                // variable to check both players selected options
+
                 return;
             }
 
@@ -70,24 +75,31 @@ public class Controller {
 
     public void messageToController(String message) {
         if(message.charAt(0) == '%' && message.charAt(1) == '%') {
+            message = message.substring(2); // cuts first ##
+
             messageToUser(message);
 
             return;
         }
 
+        System.out.println(message);
+
         if(message.charAt(0) == '#' && message.charAt(1) == '#') {
             if(message.charAt(2) == 'R') {
                 this.opponentChoice = "rock";
+                System.out.println(this.opponentChoice);
                 return;
             }
 
             if(message.charAt(2) == 'P') {
                 this.opponentChoice = "paper";
+                System.out.println(this.opponentChoice);
                 return;
             }
 
             if(message.charAt(2) == 'S') {
                 this.opponentChoice = "scissors";
+                System.out.println(this.opponentChoice);
                 return;
             }
         }

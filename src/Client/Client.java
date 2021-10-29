@@ -140,7 +140,7 @@ public class Client {
         private String message;
 
         public void receiveMessage(String message) {
-            controller.messageToUser(message);
+            controller.messageToController(message);
         }
 
         @Override
