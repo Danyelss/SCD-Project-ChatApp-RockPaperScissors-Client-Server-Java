@@ -66,6 +66,7 @@ public class Controller {
         if (opponentChoice.equalsIgnoreCase("")) {
             privateInterface.getSetInstructionalLabel().messageSetInstructionalLabel("wait");
         } else {
+            privateInterface.getImageSetterForUser().blankImageSetterForUser();
             decideWinner();
         }
     }
@@ -136,7 +137,6 @@ public class Controller {
                     showResults("win", "R");
                 } else if (userChoice.equalsIgnoreCase("paper")) {
                     showResults("lose", "P");
-
                 }
                 break;
         }
@@ -158,6 +158,10 @@ public class Controller {
                 break;
         }
 
+        privateInterface.getImageSetterForOpponent().stringImageSetterForOpponent(opponentChoice);
+
+        System.out.println("Dc pl nu imi afiseaza imaginea " + opponentChoice);
+
         afterResult();
     }
 
@@ -168,10 +172,16 @@ public class Controller {
             e.printStackTrace();
         }
 
+        System.out.println("cand morti mei ajunge aici");
+
         newGame();
     }
 
+
+
     public void messageToController(String message) {
+        System.out.println(" Decode:   " + message);
+
         if (message.charAt(0) == '%' && message.charAt(1) == '%') {
             message = message.substring(2); // cuts first ##
 
