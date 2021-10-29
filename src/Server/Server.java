@@ -3,6 +3,7 @@ package Server;
 import ControllerInterface.Controller;
 import Data.DataBackFromController;
 
+import java.net.ServerSocket;
 import java.nio.channels.SocketChannel;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Server {
 
+    private ServerSocket serverSocket ;
     private Socket clientSocket; // socket used by client to send and recieve data from server
     private BufferedReader in;   // object to read data from socket
     private PrintWriter out;     // object to write data into socket
@@ -47,6 +49,13 @@ public class Server {
     private DataBackFromController dataBackFromController;
 
 
+    public boolean isExist() {
+        return exist;
+    }
+
+    private boolean exist = false;
+
+
     public void clientClose() {
         try {
             System.out.println("Server out of service");
@@ -60,15 +69,20 @@ public class Server {
         }
     }
 
+    public Server() {}
 
-    public Server() {
+    public Server(String real) {
+
+        this.exist = true;
 
         setDataBackFromController(new DataBackFromController(this));
 
-        Controller controller = new Controller(getDataBackFromController());
+        this.controller = new Controller(getDataBackFromController());
 
         try {
-            this.clientSocket = new Socket("127.0.0.1", 8089);
+            this.serverSocket = new ServerSocket(8089);
+            this.clientSocket = serverSocket.accept();
+
             this.out = new PrintWriter(clientSocket.getOutputStream());
             this.in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
@@ -83,11 +97,10 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public static void main(String[] args) {
-        Server server = new Server();
+        Server server = new Server("real");
     }
 
     public class Sender extends Thread {
@@ -97,22 +110,16 @@ public class Server {
         public void sendMessage(String message) {
             this.message = message;
 
-            System.out.println(message);
-
             try {
                 this.cyclicBarrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
-
-            System.out.println("o trecut de send messaage cb");
         }
 
         @Override
         public void run() {
             while (true) {
-
-                System.out.println("inainte de run cb");
 
                 try {
                     this.cyclicBarrier.await();
@@ -120,12 +127,8 @@ public class Server {
                     e.printStackTrace();
                 }
 
-                System.out.println("dupa run cb");
-
-                out.print(message);
+                out.println(message);
                 out.flush();
-
-                System.out.println("dupa out print");
             }
         }
 
@@ -138,7 +141,7 @@ public class Server {
         private String message;
 
         public void receiveMessage(String message) {
-            controller.messageToUser(message);
+            controller.messageToController(message);
         }
 
         @Override
@@ -148,7 +151,6 @@ public class Server {
                 message = in.readLine();
 
                 while (message != null) {
-                    System.out.println("Server : " + message + "mue");
 
                     receiveMessage(message);
 

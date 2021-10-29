@@ -5,8 +5,8 @@ import Server.Server;
 
 public class DataBackFromController {
 
-    private Client client;
-    private Server server;
+    private Client client = new Client();
+    private Server server = new Server();
 
     private void serverDataBackFromControllerFunction(String message) {
         this.server.getSender().sendMessage(message);
@@ -17,11 +17,11 @@ public class DataBackFromController {
     }
 
     public void dataBackFromControllerFunction(String message) {
-        if(this.client != null) {
+        if(this.client.isExist()) {
             clientDataBackFromControllerFunction(message);
         }
 
-        if(this.server != null) {
+        if(this.server.isExist()) {
             serverDataBackFromControllerFunction(message);
         }
     }

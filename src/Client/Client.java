@@ -23,6 +23,7 @@ public class Client {
     private SocketChannel client;
     private Controller controller;
 
+
     public Sender getSender() {
         return sender;
     }
@@ -47,6 +48,13 @@ public class Client {
     private DataBackFromController dataBackFromController;
 
 
+    public boolean isExist() {
+        return exist;
+    }
+
+    private boolean exist = false;
+
+
     public void clientClose() {
         try {
             System.out.println("Server out of service");
@@ -60,9 +68,16 @@ public class Client {
         }
     }
 
-    public Client() {
 
-        Controller controller = new Controller(getDataBackFromController());
+    public Client() {}
+
+    public Client(String real) {
+
+        this.exist = true;
+
+        setDataBackFromController(new DataBackFromController(this));
+
+        this.controller = new Controller(getDataBackFromController());
 
         try {
             this.clientSocket = new Socket("127.0.0.1", 8089);
@@ -83,7 +98,7 @@ public class Client {
     }
 
     public static void main(String[] args) {
-        Client client = new Client();
+        Client client = new Client("real");
     }
 
     public class Sender extends Thread {
@@ -93,22 +108,17 @@ public class Client {
         public void sendMessage(String message) {
             this.message = message;
 
-            System.out.println(message);
-
             try {
                 this.cyclicBarrier.await();
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
 
-            System.out.println("o trecut de send messaage cb");
         }
 
         @Override
         public void run() {
             while (true) {
-
-                System.out.println("inainte de run cb");
 
                 try {
                     this.cyclicBarrier.await();
@@ -116,12 +126,8 @@ public class Client {
                     e.printStackTrace();
                 }
 
-                System.out.println("dupa run cb");
-
-                out.print(message);
+                out.println(message);
                 out.flush();
-
-                System.out.println("dupa out print");
             }
         }
 
@@ -144,7 +150,6 @@ public class Client {
                 message = in.readLine();
 
                 while (message != null) {
-                    System.out.println("Server : " + message + "mue");
 
                     receiveMessage(message);
 

@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-public class UserInteraction extends JFrame{
+public class UserInteraction extends JFrame {
     private JPanel mainPanel;
     private JButton sendButton;
     private JEditorPane userMessageEditorPane;
@@ -63,7 +63,7 @@ public class UserInteraction extends JFrame{
 
         this.imageSetterForUser = new ImageSetterForUser();
 
-        this.imageSetterForOpponent =  new ImageSetterForOpponent();
+        this.imageSetterForOpponent = new ImageSetterForOpponent();
 
         this.setInstructionalLabel = new SetInstructionalLabel();
 
@@ -76,15 +76,16 @@ public class UserInteraction extends JFrame{
         actionListenerController();
     }
 
-    public void actionListenerController(){
+    public void actionListenerController() {
+
         sendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                controller.messageFromUser(userMessageEditorPane.getText());
+                controller.messageFromChat(userMessageEditorPane.getText()); // send to controller
 
-                chatEditorPane.setText(chatEditorPane.getText()+ "Me: "+userMessageEditorPane.getText()+"\n" ); // send to controller
-                //receiver.sendMessageFromUser( textArea1.getText() ); // string
+                chatEditorPane.setText(chatEditorPane.getText() + "Me: " + userMessageEditorPane.getText() + "\n");
+
                 userMessageEditorPane.setText("");
             }
         });
@@ -93,15 +94,12 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                // only if action is possible
+                controller.gameMessageController("rock");
 
-                // call function to controller
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
+                imageSetterForUser.blankImageSetterForUser();
+                new SetLabelButtons().removeButtons();
 
-                //if(Controller.optionAccepted("rock")) {
-                    setInstructionalLabel.messageSetInstructionalLabel("wait");
-                    imageSetterForUser.blankImageSetterForUser();
-                    new SetLabelButtons().removeButtons();
-                //}
             }
         });
 
@@ -109,12 +107,11 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                // call function to controller
-               // if(Controller.optionAccepted("paper")) {
-                    setInstructionalLabel.messageSetInstructionalLabel("wait");
-                    imageSetterForUser.blankImageSetterForUser();
-                    new SetLabelButtons().removeButtons();
-               // }
+                controller.gameMessageController("paper");
+
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
+                imageSetterForUser.blankImageSetterForUser();
+                new SetLabelButtons().removeButtons();
             }
         });
 
@@ -122,12 +119,11 @@ public class UserInteraction extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                // call function to controller
-              // if(Controller.optionAccepted("scissors")) {
-                    setInstructionalLabel.messageSetInstructionalLabel("wait");
-                    imageSetterForUser.blankImageSetterForUser();
-                    new SetLabelButtons().removeButtons();
-               // }
+                controller.gameMessageController("scissors");
+
+                setInstructionalLabel.messageSetInstructionalLabel("wait");
+                imageSetterForUser.blankImageSetterForUser();
+                new SetLabelButtons().removeButtons();
             }
         });
     }
@@ -194,7 +190,7 @@ public class UserInteraction extends JFrame{
     public class SetLabelButtons {
 
         private void setRockButton() {
-            rockImageLabel.setLayout( new FlowLayout() );
+            rockImageLabel.setLayout(new FlowLayout());
 
             rockButton = new JButton("");
 
@@ -213,7 +209,7 @@ public class UserInteraction extends JFrame{
         }
 
         private void setPaperButton() {
-            paperImageLabel.setLayout( new FlowLayout() );
+            paperImageLabel.setLayout(new FlowLayout());
 
             paperButton = new JButton("");
 
@@ -230,7 +226,7 @@ public class UserInteraction extends JFrame{
         }
 
         private void setScissorsButton() {
-            scissorsImageLabel.setLayout( new FlowLayout() );
+            scissorsImageLabel.setLayout(new FlowLayout());
 
             scissorsButton = new JButton("");
 
@@ -294,12 +290,13 @@ public class UserInteraction extends JFrame{
             setOptionImageForOpponent(option);
         }
 
-        public ImageSetterForOpponent() {}
+        public ImageSetterForOpponent() {
+        }
     }
 
     public class SetInstructionalLabel {
 
-        private void setWait(){
+        private void setWait() {
             instructionalLabel.setText("Wait for opponent!");
         }
 
@@ -319,12 +316,16 @@ public class UserInteraction extends JFrame{
             instructionalLabel.setText("Draw.");
         }
 
-        private void setWelcome() { instructionalLabel.setText("Welcome! The Game will begin shortly."); }
+        private void setWelcome() {
+            instructionalLabel.setText("Welcome! The Game will begin shortly.");
+        }
 
-        private void setWrong() { instructionalLabel.setText("Wrong message."); }
+        private void setWrong() {
+            instructionalLabel.setText("Wrong message.");
+        }
 
         public void messageSetInstructionalLabel(String message) {
-            switch (message){
+            switch (message) {
                 case "wait":
                     setWait();
                     break;
@@ -349,12 +350,13 @@ public class UserInteraction extends JFrame{
 
         }
 
-        public SetInstructionalLabel(){}
+        public SetInstructionalLabel() {
+        }
     }
 
     public void addMessageReceivedFromPeer(String message) {
 
-        chatEditorPane.setText(chatEditorPane.getText() + "Opponent: " + message+"\n" );
+        chatEditorPane.setText(chatEditorPane.getText() + "Opponent: " + message);
     }
 
     class WindowEventHandler extends WindowAdapter {
