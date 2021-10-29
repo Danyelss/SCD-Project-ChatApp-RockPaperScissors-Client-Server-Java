@@ -96,10 +96,8 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("rock");
 
-                setInstructionalLabel.messageSetInstructionalLabel("wait");
                 imageSetterForUser.blankImageSetterForUser();
-                new SetLabelButtons().removeButtons();
-
+                //new SetLabelButtons().removeButtons();
             }
         });
 
@@ -109,9 +107,8 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("paper");
 
-                setInstructionalLabel.messageSetInstructionalLabel("wait");
                 imageSetterForUser.blankImageSetterForUser();
-                new SetLabelButtons().removeButtons();
+                //new SetLabelButtons().removeButtons();
             }
         });
 
@@ -121,9 +118,8 @@ public class UserInteraction extends JFrame {
 
                 controller.gameMessageController("scissors");
 
-                setInstructionalLabel.messageSetInstructionalLabel("wait");
                 imageSetterForUser.blankImageSetterForUser();
-                new SetLabelButtons().removeButtons();
+                //new SetLabelButtons().removeButtons();
             }
         });
     }
